@@ -45,6 +45,9 @@ public class ResponseController extends CrudController<JResponse,
         DResponse, 
         Long, 
         ResponseService> {
+    public static final int    ERR_RESPONSE_GET_NOT_FOUND = SurveyService.ERR_RESPONSE + 1;
+    public static final int    ERR_CREATE_NOT_FOUND       = SurveyService.ERR_RESPONSE + 2;
+    public static final int    ERR_CREATE_CONFLICT        = SurveyService.ERR_RESPONSE + 3;
 
     public static final String MODEL_NAME_SURVEYID = "surveyId";
     public static final String MODEL_NAME_VERSIONID = "versionId";
@@ -68,7 +71,7 @@ public class ResponseController extends CrudController<JResponse,
     }
     
     @Override
-    public JResponse addInnerObjects(HttpServletRequest request, 
+    public void addInnerObjects(HttpServletRequest request, 
             HttpServletResponse response,
             String domain,
             Model model,
@@ -85,8 +88,6 @@ public class ResponseController extends CrudController<JResponse,
             LOG.debug("found inners {}", inners.getItems());
             jEntity.setAnswers(inners.getItems());
         }
-        
-        return jEntity;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class ResponseController extends CrudController<JResponse,
             @PathVariable String domain, 
             Model model, 
             @RequestParam(defaultValue="10") int pageSize, 
-            @RequestParam(required=false) Serializable cursorKey) {
+            @RequestParam(required=false) String cursorKey) {
         
         Long versionId = (Long) model.asMap().get("versionId");
         CursorPage<DResponse, Long> page = surveyService.getResponsesPage(versionId, pageSize, cursorKey);

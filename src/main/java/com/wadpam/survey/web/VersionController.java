@@ -45,7 +45,7 @@ public class VersionController extends CrudController<JVersion, DVersion, Long, 
             @PathVariable String domain,
             Model model,
             @RequestParam(defaultValue="10") int pageSize, 
-            @RequestParam(required=false) Serializable cursorKey) {
+            @RequestParam(required=false) String cursorKey) {
 
         Long surveyId = (Long) model.asMap().get("surveyId");
         final CursorPage<DVersion, Long> page = surveyService.getVersionsPage(surveyId, pageSize, cursorKey);

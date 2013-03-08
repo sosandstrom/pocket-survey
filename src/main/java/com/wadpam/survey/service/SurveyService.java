@@ -1,12 +1,21 @@
 package com.wadpam.survey.service;
 
+import java.io.Serializable;
+import java.util.Collection;
+
+import net.sf.mardao.core.CursorPage;
+import net.sf.mardao.core.dao.DaoImpl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.wadpam.open.exceptions.ConflictException;
 import com.wadpam.open.exceptions.NotFoundException;
 import com.wadpam.survey.dao.DAnswerDao;
 import com.wadpam.survey.dao.DOptionDao;
 import com.wadpam.survey.dao.DQuestionDao;
-import com.wadpam.survey.dao.DSurveyDao;
 import com.wadpam.survey.dao.DResponseDao;
+import com.wadpam.survey.dao.DSurveyDao;
 import com.wadpam.survey.dao.DVersionDao;
 import com.wadpam.survey.dao.Di18nDao;
 import com.wadpam.survey.domain.DAnswer;
@@ -19,18 +28,12 @@ import com.wadpam.survey.json.JAnswer;
 import com.wadpam.survey.json.JResponse;
 import com.wadpam.survey.json.JSurvey;
 import com.wadpam.survey.json.JVersion;
-import com.wadpam.survey.web.OldAnswerController;
+import com.wadpam.survey.web.AnswerController;
 import com.wadpam.survey.web.Converter;
-import com.wadpam.survey.web.OldOptionController;
-import com.wadpam.survey.web.OldQuestionController;
-import com.wadpam.survey.web.OldResponseController;
-import com.wadpam.survey.web.OldSurveyController;
-import java.io.Serializable;
-import java.util.Collection;
-import net.sf.mardao.core.CursorPage;
-import net.sf.mardao.core.dao.DaoImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.wadpam.survey.web.OptionController;
+import com.wadpam.survey.web.QuestionController;
+import com.wadpam.survey.web.ResponseController;
+import com.wadpam.survey.web.SurveyController;
 
 /**
  *
@@ -127,7 +130,7 @@ public class SurveyService {
 
         // id must be generated
         if (null != dEntity.getId()) {
-            throw new ConflictException(OldAnswerController.ERR_CREATE_CONFLICT,
+            throw new ConflictException(AnswerController.ERR_CREATE_CONFLICT,
                     String.format("id {} must not be specified", dEntity.getId()),
                     null,
                     "id must be generated");
@@ -136,7 +139,7 @@ public class SurveyService {
         // check that question exists
         final DQuestion question = questionDao.findByPrimaryKey(dEntity.getQuestion().getId());
         if (null == question) {
-            throw new NotFoundException(OldAnswerController.ERR_CREATE_NOT_FOUND, 
+            throw new NotFoundException(AnswerController.ERR_CREATE_NOT_FOUND, 
                     String.format("Question {} not found",  dEntity.getQuestion().getId()), 
                     null, 
                     "Cannot answer non-existing question");
@@ -150,7 +153,7 @@ public class SurveyService {
         
         // id must be generated
         if (null != dEntity.getId()) {
-            throw new ConflictException(OldOptionController.ERR_CREATE_CONFLICT,
+            throw new ConflictException(OptionController.ERR_CREATE_CONFLICT,
                     String.format("id {} must not be specified", dEntity.getId()),
                     null,
                     "id must be generated");
@@ -159,7 +162,7 @@ public class SurveyService {
         // check that question exists
         final DQuestion question = questionDao.findByPrimaryKey(dEntity.getQuestion().getId());
         if (null == question) {
-            throw new NotFoundException(OldOptionController.ERR_CREATE_NOT_FOUND, 
+            throw new NotFoundException(OptionController.ERR_CREATE_NOT_FOUND, 
                     String.format("Question {} not found",  dEntity.getQuestion().getId()), 
                     null, 
                     "Cannot answer non-existing question");
@@ -173,7 +176,7 @@ public class SurveyService {
         
         // id must be generated
         if (null != dEntity.getId()) {
-            throw new ConflictException(OldQuestionController.ERR_CREATE_CONFLICT,
+            throw new ConflictException(QuestionController.ERR_CREATE_CONFLICT,
                     String.format("id {} must not be specified", dEntity.getId()),
                     null,
                     "id must be generated");
@@ -183,7 +186,7 @@ public class SurveyService {
         // check that survey exists
         final DSurvey survey = surveyDao.findByPrimaryKey(dEntity.getSurvey().getId());
         if (null == survey) {
-            throw new NotFoundException(OldQuestionController.ERR_CREATE_NOT_FOUND, 
+            throw new NotFoundException(QuestionController.ERR_CREATE_NOT_FOUND, 
                     String.format("Survey {} not found",  dEntity.getSurvey().getId()), 
                     null, 
                     "Cannot respond to non-existing survey");
@@ -197,7 +200,7 @@ public class SurveyService {
         
         // id must be generated
         if (null != dEntity.getId()) {
-            throw new ConflictException(OldSurveyController.ERR_CREATE_CONFLICT,
+            throw new ConflictException(SurveyController.ERR_CREATE_CONFLICT,
                     String.format("id {} must not be specified", dEntity.getId()),
                     null,
                     "id must be generated");
@@ -438,7 +441,7 @@ public class SurveyService {
         // check that survey exists
         final DSurvey survey = surveyDao.findByPrimaryKey(dEntity.getSurvey().getId());
         if (null == survey) {
-            throw new NotFoundException(OldResponseController.ERR_CREATE_NOT_FOUND, 
+            throw new NotFoundException(ResponseController.ERR_CREATE_NOT_FOUND, 
                     String.format("Survey {} not found",  dEntity.getSurvey().getId()), 
                     null, 
                     "Cannot respond to non-existing survey");

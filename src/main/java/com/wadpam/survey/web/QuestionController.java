@@ -4,20 +4,15 @@
 
 package com.wadpam.survey.web;
 
-import com.wadpam.docrest.domain.RestCode;
-import com.wadpam.docrest.domain.RestReturn;
-import com.wadpam.open.json.JCursorPage;
-import com.wadpam.open.mvc.CrudController;
-import com.wadpam.survey.domain.DQuestion;
-import com.wadpam.survey.domain.DSurvey;
-import com.wadpam.survey.domain.DVersion;
-import com.wadpam.survey.json.JQuestion;
-import com.wadpam.survey.service.QuestionService;
-import com.wadpam.survey.service.SurveyService;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import net.sf.mardao.core.CursorPage;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +22,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.wadpam.docrest.domain.RestCode;
+import com.wadpam.docrest.domain.RestReturn;
+import com.wadpam.open.json.JCursorPage;
+import com.wadpam.open.mvc.CrudController;
+import com.wadpam.survey.domain.DQuestion;
+import com.wadpam.survey.domain.DSurvey;
+import com.wadpam.survey.domain.DVersion;
+import com.wadpam.survey.json.JOption;
+import com.wadpam.survey.json.JQuestion;
+import com.wadpam.survey.service.QuestionService;
+import com.wadpam.survey.service.SurveyService;
 
 /**
  *
@@ -38,9 +45,32 @@ public class QuestionController extends CrudController<JQuestion,
         DQuestion, 
         Long, 
         QuestionService> {
+    public static final int    ERR_GET_NOT_FOUND    = SurveyService.ERR_QUESTION + 1;
+    public static final int    ERR_CREATE_NOT_FOUND = SurveyService.ERR_QUESTION + 2;
+    public static final int    ERR_CREATE_CONFLICT  = SurveyService.ERR_QUESTION + 3;
+
+    public static final String NAME_INNER_OPTIONS = "options";
 
     protected SurveyService surveyService;
-    
+    private OptionController optionController;
+
+    @Override
+    public void addInnerObjects(HttpServletRequest request, HttpServletResponse response,
+            String domain, Model model, Iterable<JQuestion> jEntities) {
+        if (null != jEntities
+                && (null != request.getParameter(NAME_INNER_OPTIONS) || null != request.getAttribute(NAME_INNER_OPTIONS))) {
+            for(JQuestion jEntity : jEntities) {
+                // add options
+                Long outerId = Long.parseLong(jEntity.getId());
+                model.addAttribute("questionId", outerId);
+                final JCursorPage<JOption> inners = optionController.getPage(request, response,
+                        domain, model, 1000, null);
+                LOG.debug("found inners {}", inners.getItems());
+                jEntity.setOptions(inners.getItems());
+            }
+        }
+    }
+
     @ModelAttribute("surveyId")
     public Long addSurveyId(@PathVariable Long surveyId) {
         return surveyId;
@@ -50,7 +80,12 @@ public class QuestionController extends CrudController<JQuestion,
     public Long addVersionId(@PathVariable Long versionId) {
         return versionId;
     }
-    
+
+    @Override
+    protected Collection<String> getInnerParameterNames() {
+        return Arrays.asList(NAME_INNER_OPTIONS);
+    }
+
     /**
      * Queries for a (next) page of entities
      * @param pageSize default is 10
@@ -60,18 +95,18 @@ public class QuestionController extends CrudController<JQuestion,
     @Override
     @RestReturn(value=JCursorPage.class, code={
         @RestCode(code=200, description="A CursorPage with JSON entities", message="OK")})
-    @RequestMapping(value="v10", method= RequestMethod.GET)
-    @ResponseBody
-    public JCursorPage<JQuestion> getPage(HttpServletRequest request, 
+        @RequestMapping(value="v10", method= RequestMethod.GET)
+        @ResponseBody
+    public JCursorPage<JQuestion> getPage(HttpServletRequest request,
             HttpServletResponse response,
-            @PathVariable String domain, 
-            Model model, 
-            @RequestParam(defaultValue="10") int pageSize, 
-            @RequestParam(required=false) Serializable cursorKey) {
-        
+            @PathVariable String domain, Model model,
+            @RequestParam(defaultValue="10") int pageSize,
+            @RequestParam(required=false) String cursorKey) {
+
         Long versionId = (Long) model.asMap().get("versionId");
-        CursorPage<DQuestion, Long> page = surveyService.getQuestionsPage(versionId, pageSize, cursorKey);
-        return convertPage(page);
+        CursorPage<DQuestion, Long> page = surveyService.getQuestionsPage(versionId,
+                pageSize, cursorKey);
+        return convertPageWithInner(request, response, domain, model, page);
     }
 
     // ---------------- Converter and setters ------------------------------
@@ -122,5 +157,10 @@ public class QuestionController extends CrudController<JQuestion,
     @Autowired
     public void setSurveyService(SurveyService surveyService) {
         this.surveyService = surveyService;
+    }
+
+    @Autowired
+    public void setOptionController(OptionController optionController) {
+        this.optionController = optionController;
     }
 }

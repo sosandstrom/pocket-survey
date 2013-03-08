@@ -64,6 +64,7 @@
     <bean id="questionController" class="com.wadpam.survey.web.QuestionController">
         <property name="questionService" ref="questionService" />
         <property name="surveyService" ref="surveyService" />
+        <property name="optionController" ref="optionController" />
     </bean>
     
     <bean id="responseController" class="com.wadpam.survey.web.ResponseController">

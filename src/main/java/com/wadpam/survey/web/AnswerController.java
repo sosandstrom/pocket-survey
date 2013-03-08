@@ -40,7 +40,10 @@ public class AnswerController extends CrudController<JAnswer,
         DAnswer, 
         Long, 
         AnswerService> {
-    
+    public static final int ERR_GET_NOT_FOUND    = SurveyService.ERR_ANSWER + 1;
+    public static final int ERR_CREATE_NOT_FOUND = SurveyService.ERR_ANSWER + 2;
+    public static final int ERR_CREATE_CONFLICT  = SurveyService.ERR_ANSWER + 3;
+
     protected SurveyService surveyService;
 
     @ModelAttribute("surveyId")
@@ -75,7 +78,7 @@ public class AnswerController extends CrudController<JAnswer,
             @PathVariable String domain,
             Model model,
             @RequestParam(defaultValue="10") int pageSize, 
-            @RequestParam(required=false) Serializable cursorKey) {
+            @RequestParam(required=false) String cursorKey) {
         Long responseId = (Long) model.asMap().get("responseId");
         final CursorPage<DAnswer, Long> page = surveyService.getAnswersPage(responseId, pageSize, cursorKey);
         final JCursorPage<JAnswer> body = convertPage(page);

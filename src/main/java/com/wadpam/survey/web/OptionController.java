@@ -39,7 +39,10 @@ public class OptionController extends CrudController<JOption,
         DOption, 
         Long, 
         OptionService> {
-    
+    public static final int ERR_GET_NOT_FOUND    = SurveyService.ERR_OPTION + 1;
+    public static final int ERR_CREATE_NOT_FOUND = SurveyService.ERR_OPTION + 2;
+    public static final int ERR_CREATE_CONFLICT  = SurveyService.ERR_OPTION + 3;
+
     protected SurveyService surveyService;
 
     @ModelAttribute("surveyId")
@@ -74,7 +77,7 @@ public class OptionController extends CrudController<JOption,
             @PathVariable String domain, 
             Model model, 
             @RequestParam(defaultValue="10") int pageSize, 
-            @RequestParam(required=false) Serializable cursorKey) {
+            @RequestParam(required=false) String cursorKey) {
         Long questionId = (Long) model.asMap().get("questionId");
         CursorPage<DOption, Long> page = surveyService.getOptionsPage(questionId, pageSize, cursorKey);
         return convertPage(page);

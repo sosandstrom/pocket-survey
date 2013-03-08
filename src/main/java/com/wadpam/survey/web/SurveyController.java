@@ -1,5 +1,19 @@
 package com.wadpam.survey.web;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
 import com.wadpam.open.json.JCursorPage;
@@ -9,17 +23,7 @@ import com.wadpam.survey.domain.DVersion;
 import com.wadpam.survey.json.JSurvey;
 import com.wadpam.survey.json.JVersion;
 import com.wadpam.survey.service.SurveyCrudService;
-import java.util.Arrays;
-import java.util.Collection;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.wadpam.survey.service.SurveyService;
 
 /**
  *
@@ -28,7 +32,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("{domain}/survey")
 public class SurveyController extends CrudController<JSurvey, DSurvey, Long, SurveyCrudService> {
-    
+    public static final int    ERR_SURVEY_GET_NOT_FOUND = SurveyService.ERR_SURVEY + 1;
+    public static final int    ERR_CREATE_CONFLICT      = SurveyService.ERR_SURVEY + 2;
+
     public static final String NAME_INNER_VERSIONS = "versions";
     
     private VersionController versionController;
@@ -54,7 +60,7 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
     }
 
     @Override
-    public JSurvey addInnerObjects(HttpServletRequest request, 
+    public void addInnerObjects(HttpServletRequest request, 
             HttpServletResponse response,
             String domain,
             Model model,
@@ -67,12 +73,10 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
             Long surveyId = Long.parseLong(jSurvey.getId());
             model.addAttribute("surveyId", surveyId);
             final JCursorPage<JVersion> versions = versionController.getPage(request, 
-                    response, domain, model, 5, null);
+                    response, domain, model, 1000, null);
             LOG.debug("found versions {}", versions.getItems());
             jSurvey.setVersions(versions.getItems());
         }
-        
-        return jSurvey;
     }
 
     @Override

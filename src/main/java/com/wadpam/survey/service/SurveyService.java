@@ -370,11 +370,6 @@ public class SurveyService {
         return page;
     }
     
-    public CursorPage<DResponse, Long> getResponsesPageByExtMeetingId(String extMeetingId, int pageSize, String cursorKey) {
-        final CursorPage<DResponse, Long> page = responseDao.queryPageByExtMeetingId(extMeetingId, pageSize, cursorKey);
-        return page;
-    }
-
     public DSurvey getSurvey(Long id) {
         final DSurvey entity = surveyDao.findByPrimaryKey(id);
         return entity;

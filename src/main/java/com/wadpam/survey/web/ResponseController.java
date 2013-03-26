@@ -8,6 +8,7 @@ import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
 import com.wadpam.open.json.JCursorPage;
 import com.wadpam.open.mvc.CrudController;
+import com.wadpam.open.mvc.CrudListener;
 import com.wadpam.survey.domain.DAnswer;
 import com.wadpam.survey.domain.DResponse;
 import com.wadpam.survey.domain.DSurvey;
@@ -95,6 +96,25 @@ public class ResponseController extends CrudController<JResponse,
             String domain, 
             JResponse body) {
         return surveyService.upsertResponse(body);
+    }
+    
+    @Override
+    protected DResponse update(HttpServletRequest request, HttpServletResponse response,
+            String domain,
+            Long id,
+            String xRequestedWith,
+            Model model,
+            JResponse body) {
+        
+        LOG.debug(body.toString());
+
+        JResponse amendedBody = populateRequestBody(request, model, body);
+        DResponse d = convertJson(amendedBody);
+        preService(request, domain, CrudListener.UPDATE, amendedBody, d, id);
+        surveyService.upsertResponse(amendedBody);
+        postService(request, domain, CrudListener.UPDATE, amendedBody, id, d);
+        
+        return d;
     }
     
     @Override

@@ -4,11 +4,36 @@
 
 package com.wadpam.survey.web;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.mardao.core.CursorPage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
 import com.wadpam.open.json.JCursorPage;
 import com.wadpam.open.mvc.CrudController;
-import static com.wadpam.open.mvc.CrudController.convertJLong;
+import com.wadpam.open.mvc.CrudListener;
 import com.wadpam.survey.domain.DOption;
 import com.wadpam.survey.domain.DQuestion;
 import com.wadpam.survey.domain.DSurvey;
@@ -16,19 +41,6 @@ import com.wadpam.survey.domain.DVersion;
 import com.wadpam.survey.json.JOption;
 import com.wadpam.survey.service.OptionService;
 import com.wadpam.survey.service.SurveyService;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import net.sf.mardao.core.CursorPage;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -61,7 +73,47 @@ public class OptionController extends CrudController<JOption,
         return questionId;
     }
     
-    
+    /**
+     * Create or update (upsert) the option objects from the json-object-encoded array body by MediaType.APPLICATION_JSON_VALUE, 
+     * and responds with the upserted IDs.
+     * @param domain the path-variable domain
+     * @param jEntities The Request body will be bound to this object array
+     * @return 200 and the upserted Ids
+     */
+    @RestReturn(value=Object.class, code={
+        @RestCode(code=200, description="Batch of Entities upserted", message="OK")
+    })
+    @RequestMapping(value="v10/_batch", method=RequestMethod.POST, consumes=MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @Override
+    public List<Long> upsertBatchFromJsonWithContent(HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String domain,
+            Model model,
+            @RequestBody ArrayList<Map<String,Object>> jEntities) {
+        LOG.debug("upserting {} entities", jEntities.size());
+        final List<Long> ids = new ArrayList<Long>();
+
+        // ArrayList<DOption> dEntities = new ArrayList<DOption>();
+        for(Map<String, Object> map : jEntities) {
+            JOption jEntity = convertMap(map);
+            DOption d = convertJson(jEntity);
+            // To keep them in order we need to sequentially update them instead of batch upsert (batch upsert use future)
+            if (d.getId() != null) {
+                service.update(d);
+                ids.add(d.getId());
+            }
+            else {
+                ids.add(service.create(d));
+            }
+        }
+
+        // final List<Long> body = service.upsert(dEntities);
+        // return body;
+        return ids;
+    }
+
+
     /**
      * Queries for a (next) page of entities
      * @param pageSize default is 10
@@ -130,20 +182,13 @@ public class OptionController extends CrudController<JOption,
 
         to.setAppArg0((String)from.get("appArg0"));
         to.setLabel((String)from.get("label"));
-        Integer l = (Integer) from.get("questionId");
-        if (null != l) {
-            to.setQuestionId((long) l);
-        }
-        l = (Integer) from.get("surveyId");
-        if (null != l) {
-            to.setSurveyId((long) l);
-        }
-        l = (Integer) from.get("versionId");
-        if (null != l) {
-            to.setVersionId((long) l);
-        }
+
+        // should be obtained from path variables
+        to.setQuestionId((Long) from.get("questionId"));
+        to.setSurveyId((Long) from.get("surveyId"));
+        to.setVersionId((Long) from.get("versionId"));
     }
-    
+
     @Autowired
     public void setOptionService(OptionService optionService) {
         this.service = optionService;

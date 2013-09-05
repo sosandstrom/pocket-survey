@@ -4,9 +4,7 @@
 
 package com.wadpam.survey.web;
 
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.mardao.core.CursorPage;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,7 +29,6 @@ import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
 import com.wadpam.open.json.JCursorPage;
 import com.wadpam.open.mvc.CrudController;
-import com.wadpam.open.mvc.CrudListener;
 import com.wadpam.survey.domain.DOption;
 import com.wadpam.survey.domain.DQuestion;
 import com.wadpam.survey.domain.DSurvey;
@@ -184,9 +179,15 @@ public class OptionController extends CrudController<JOption,
         to.setLabel((String)from.get("label"));
 
         // should be obtained from path variables
-        to.setQuestionId((Long) from.get("questionId"));
-        to.setSurveyId((Long) from.get("surveyId"));
-        to.setVersionId((Long) from.get("versionId"));
+        if (from.get("questionId") != null) {
+            to.setQuestionId(Long.parseLong(from.get("questionId").toString()));
+        }
+        if (from.get("surveyId") != null) {
+            to.setSurveyId(Long.parseLong(from.get("surveyId").toString()));
+        }
+        if (from.get("versionId") != null) {
+            to.setVersionId(Long.parseLong(from.get("versionId").toString()));
+        }
     }
 
     @Autowired

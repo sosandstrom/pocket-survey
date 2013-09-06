@@ -3,6 +3,9 @@ package com.wadpam.survey.service;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import net.sf.mardao.core.CursorPage;
 import net.sf.mardao.core.dao.DaoImpl;
@@ -408,7 +411,21 @@ public class SurveyService {
     public CursorPage<DOption, Long> getOptionsPage(Long questionId, int pageSize, String cursorKey) {
         DQuestion question = new DQuestion();
         question.setId(questionId);
+
+        optionDao.queryPage(pageSize, DOptionDao.COLUMN_NAME_CREATEDDATE, true, null, false, cursorKey);
         final CursorPage<DOption, Long> page = optionDao.queryPageByQuestion(question, pageSize, cursorKey);
+
+        // run a quick sort by created date to avoid indexing.
+        if (page.getTotalSize() > 1) {
+            List<DOption> options = new ArrayList<DOption>(page.getItems());
+            Collections.sort(options, new Comparator<DOption>() {
+                @Override
+                public int compare(DOption o1, DOption o2) {
+                    return (int) (o1.getCreatedDate().getTime() - o2.getCreatedDate().getTime());
+                }
+            });
+            page.setItems(options);
+        }
         return page;
     }
     

@@ -4,7 +4,7 @@
 
     <groupId>com.wadpam.survey</groupId>
     <artifactId>service-survey</artifactId>
-    <version>20</version>
+    <version>21-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Pocket-Survey service</name>
 

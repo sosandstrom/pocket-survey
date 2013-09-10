@@ -53,4 +53,12 @@ public class DResponseDaoBean extends GeneratedDResponseDaoImpl implements DResp
         Filter filter = createEqualsFilter(COLUMN_NAME_VERSION, versionKey);
         return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
     }
+
+    @Override
+    public Iterable<Long> queryKeysBySurveyVersionExtMeeting(Object surveyKey, Object versionKey, String meetingId) {
+        Filter surveyFilter = createEqualsFilter(COLUMN_NAME_SURVEY, surveyKey);
+        Filter versionFilter = createEqualsFilter(COLUMN_NAME_VERSION, versionKey);
+        Filter meetingFilter = createEqualsFilter(COLUMN_NAME_EXTMEETINGID, meetingId);
+        return queryIterableKeys(0, -1, null, null, null, false, null, false, surveyFilter, versionFilter, meetingFilter);
+    }
 }

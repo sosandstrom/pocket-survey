@@ -34,4 +34,6 @@ public interface DResponseDao extends GeneratedDResponseDao {
     public Iterable<Long> queryKeysBySurvey(Object surveyKey);
 
     public Iterable<Long> queryKeysByVersion(Object versionKey);
+
+    Iterable<Long> queryKeysBySurveyVersionExtMeeting(Object surveyKey, Object versionKey, String meetingId);
 }

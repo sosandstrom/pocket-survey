@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.mardao.core.CursorPage;
@@ -557,7 +558,7 @@ public class SurveyService {
                     null, 
                     "Cannot respond to non-existing survey");
         }
-        
+
         // patch state if missing
         if (null == dEntity.getState()) {
             dEntity.setState(JResponse.STATE_ACTIVE);
@@ -567,7 +568,21 @@ public class SurveyService {
         if (existed) {
             responseDao.update(dEntity);
         }
-        else {
+        else if (dEntity.getExtMeetingId() != null) {
+            // any conflict response? - just check in case client double submit the response of the same meeting of the same survey.
+            DVersion version = new DVersion();
+            version.setId(dEntity.getVersion().getId());
+            Object versionKey = versionDao.getPrimaryKey(version);
+            Object surveyKey = surveyDao.getPrimaryKey(survey);
+
+            Iterable<Long> respIds = responseDao.queryKeysBySurveyVersionExtMeeting(surveyKey, versionKey, dEntity.getExtMeetingId());
+            Iterator<Long> it = respIds.iterator();
+            if (it.hasNext()) {
+                throw new ConflictException(ERR_RESPONSE + 100, "Conflict: Unable to create response as it found to be conflict with " + it.next());
+            }
+            // Persist it if no conflict found.
+            responseDao.persist(dEntity);
+        } else {
             responseDao.persist(dEntity);
         }
 

@@ -545,11 +545,19 @@ public class SurveyService {
     }
 
     public DResponse upsertResponse(JResponse jResponse) {
+        return upsertResponse(jResponse, false);
+    }
+    
+    public DResponse upsertResponse(JResponse jResponse, boolean allowDuplicate) {
         final DResponse dEntity = Converter.convert(jResponse);
-        return upsertResponse(dEntity, jResponse.getAnswers());
+        return upsertResponse(dEntity, jResponse.getAnswers(), allowDuplicate);
+    }
+    
+    public DResponse upsertResponse(DResponse dEntity, Collection<JAnswer> innerAnswers) {
+        return upsertResponse(dEntity, innerAnswers, false);
     }
         
-    public DResponse upsertResponse(DResponse dEntity, Collection<JAnswer> innerAnswers) {
+    public DResponse upsertResponse(DResponse dEntity, Collection<JAnswer> innerAnswers, boolean allowDuplicate) {
         // check that survey exists
         final DSurvey survey = surveyDao.findByPrimaryKey(dEntity.getSurvey().getId());
         if (null == survey) {
@@ -574,10 +582,10 @@ public class SurveyService {
             version.setId(dEntity.getVersion().getId());
             Object versionKey = versionDao.getPrimaryKey(version);
             Object surveyKey = surveyDao.getPrimaryKey(survey);
-
+            
             Iterable<Long> respIds = responseDao.queryKeysBySurveyVersionExtMeeting(surveyKey, versionKey, dEntity.getExtMeetingId());
             Iterator<Long> it = respIds.iterator();
-            if (it.hasNext()) {
+            if (it.hasNext() && !allowDuplicate) {
                 throw new ConflictException(ERR_RESPONSE + 100, "Conflict: Unable to create response as it found to be conflict with " + it.next());
             }
             // Persist it if no conflict found.

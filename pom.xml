@@ -26,8 +26,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <itest.include>**/*ITest.java</itest.include>
         <surefire.default.skip>true</surefire.default.skip>
-        <mardao.version>2.3.1</mardao.version>
-        <openserver.version>20</openserver.version>
+        <mardao.version>2.3.3</mardao.version>
+        <openserver.version>30-SNAPSHOT</openserver.version>
         <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
         <docrest.version>1.22</docrest.version>
         <logging.level>ALL</logging.level>

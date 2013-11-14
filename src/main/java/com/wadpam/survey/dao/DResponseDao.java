@@ -26,9 +26,9 @@ public interface DResponseDao extends GeneratedDResponseDao {
      * @param cursorKey
      * @return page of responses
      */
-    public CursorPage<DResponse, Long> queryPageBySurveyIdVersionIdAndExtMeetingId(Long surveyId, Long versionId, String extMeetingId, int pageSize, String cursorKey);
+    public CursorPage<DResponse> queryPageBySurveyIdVersionIdAndExtMeetingId(Long surveyId, Long versionId, String extMeetingId, int pageSize, String cursorKey);
 
-    public CursorPage<DResponse, Long> queryPageByVersionIdCreatedBy(Long versionId, String createdById, int pageSize,
+    public CursorPage<DResponse> queryPageByVersionIdCreatedBy(Long versionId, String createdById, int pageSize,
             String cursorKey);
 
     public Iterable<Long> queryKeysBySurvey(Object surveyKey);

@@ -163,7 +163,7 @@ public class ResponseController extends CrudController<JResponse,
             @RequestParam(required=false) String cursorKey) {
         
         Long versionId = (Long) model.asMap().get("versionId");
-        final CursorPage<DResponse, Long> page = surveyService.getResponsesPage(versionId, pageSize, cursorKey);
+        final CursorPage<DResponse> page = surveyService.getResponsesPage(versionId, pageSize, cursorKey);
         final JCursorPage<JResponse> body = (JCursorPage<JResponse>) convertPageWithInner(request, response, domain, model, page);
 
         return body;
@@ -191,7 +191,7 @@ public class ResponseController extends CrudController<JResponse,
         preService(request, domain, OPERATION_GET_PAGE_BY_CREATEDBY, null, null, cursorKey);
 
         Long versionId = (Long) model.asMap().get("versionId");
-        final CursorPage<DResponse, Long> page = service.getResponsesPageByVersionIdCreatedBy(versionId, createdBy, pageSize, cursorKey);
+        final CursorPage<DResponse> page = service.getResponsesPageByVersionIdCreatedBy(versionId, createdBy, pageSize, cursorKey);
         final JCursorPage<JResponse> body = (JCursorPage<JResponse>) convertPageWithInner(request, response, domain, model, page);
         postService(request, domain, OPERATION_GET_PAGE_BY_CREATEDBY, body, cursorKey, page);
 
@@ -221,7 +221,7 @@ public class ResponseController extends CrudController<JResponse,
             @RequestParam(required=false) String cursorKey,
             Model model) {
 
-        final CursorPage<DResponse, Long> page = service.getResponsesPageBySurveyIdVersionIdAndExtMeetingId(surveyId, versionId, extMeetingId, pageSize, cursorKey);
+        final CursorPage<DResponse> page = service.getResponsesPageBySurveyIdVersionIdAndExtMeetingId(surveyId, versionId, extMeetingId, pageSize, cursorKey);
         final JCursorPage<JResponse> body = (JCursorPage<JResponse>) convertPageWithInner(request, response, domain, model, page);
 
         return body;

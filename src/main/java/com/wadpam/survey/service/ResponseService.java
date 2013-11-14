@@ -23,16 +23,16 @@ public class ResponseService extends MardaoCrudService<
 
     protected SurveyService surveyService;
 
-    public CursorPage<DResponse, Long> getResponsesPageByExtMeetingId(String extMeetingId, int pageSize, String cursorKey) {
-        final CursorPage<DResponse, Long> page = dao.queryPageByExtMeetingId(extMeetingId, pageSize, cursorKey);
+    public CursorPage<DResponse> getResponsesPageByExtMeetingId(String extMeetingId, int pageSize, String cursorKey) {
+        final CursorPage<DResponse> page = dao.queryPageByExtMeetingId(extMeetingId, pageSize, cursorKey);
         return page;
     }
 
-    public CursorPage<DResponse, Long> getResponsesPageBySurveyIdVersionIdAndExtMeetingId(Long surveyId, Long versionId, String extMeetingId, int pageSize, String cursorKey) {
+    public CursorPage<DResponse> getResponsesPageBySurveyIdVersionIdAndExtMeetingId(Long surveyId, Long versionId, String extMeetingId, int pageSize, String cursorKey) {
         return dao.queryPageBySurveyIdVersionIdAndExtMeetingId(surveyId, versionId, extMeetingId, pageSize, cursorKey);
     }
 
-    public CursorPage<DResponse, Long> getResponsesPageByVersionIdCreatedBy(Long versionId, String createdById, int pageSize, String cursorKey) {
+    public CursorPage<DResponse> getResponsesPageByVersionIdCreatedBy(Long versionId, String createdById, int pageSize, String cursorKey) {
         return dao.queryPageByVersionIdCreatedBy(versionId, createdById, pageSize, cursorKey);
     }
 

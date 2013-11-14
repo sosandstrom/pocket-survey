@@ -16,7 +16,7 @@ import com.wadpam.survey.domain.DResponse;
 public class DResponseDaoBean extends GeneratedDResponseDaoImpl implements DResponseDao {
 
     @Override
-    public CursorPage<DResponse, Long> queryPageBySurveyIdVersionIdAndExtMeetingId(Long surveyId, Long versionId,
+    public CursorPage<DResponse> queryPageBySurveyIdVersionIdAndExtMeetingId(Long surveyId, Long versionId,
             String extMeetingId, int pageSize, String cursorKey) {
         final Object surveyForeignKey = getSurveyDao().getPrimaryKey(null, surveyId);
         final Filter surveyFilter = createEqualsFilter(COLUMN_NAME_SURVEY, surveyForeignKey);
@@ -31,7 +31,7 @@ public class DResponseDaoBean extends GeneratedDResponseDaoImpl implements DResp
     }
 
     @Override
-    public CursorPage<DResponse, Long> queryPageByVersionIdCreatedBy(Long versionId, String createdById, int pageSize,
+    public CursorPage<DResponse> queryPageByVersionIdCreatedBy(Long versionId, String createdById, int pageSize,
             String cursorKey) {
         final Object versionForeignKey = getVersionDao().getPrimaryKey(null, versionId);
         final Filter versionFilter = createEqualsFilter(COLUMN_NAME_VERSION, versionForeignKey);

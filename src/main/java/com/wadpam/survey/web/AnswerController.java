@@ -25,7 +25,6 @@ import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
 import com.wadpam.open.json.JCursorPage;
 import com.wadpam.open.mvc.CrudController;
-import com.wadpam.open.mvc.CrudListener;
 import com.wadpam.survey.domain.DAnswer;
 import com.wadpam.survey.domain.DQuestion;
 import com.wadpam.survey.domain.DResponse;
@@ -85,7 +84,7 @@ public class AnswerController extends CrudController<JAnswer,
             @RequestParam(defaultValue="10") int pageSize, 
             @RequestParam(required=false) String cursorKey) {
         Long responseId = (Long) model.asMap().get("responseId");
-        final CursorPage<DAnswer, Long> page = surveyService.getAnswersPage(responseId, pageSize, cursorKey);
+        final CursorPage<DAnswer> page = surveyService.getAnswersPage(responseId, pageSize, cursorKey);
         final JCursorPage<JAnswer> body = convertPage(page);
 
         return body;

@@ -113,7 +113,7 @@ public class QuestionController extends CrudController<JQuestion,
             @RequestParam(required=false) String cursorKey) {
 
         Long versionId = (Long) model.asMap().get("versionId");
-        CursorPage<DQuestion, Long> page = surveyService.getQuestionsPage(versionId,
+        CursorPage<DQuestion> page = surveyService.getQuestionsPage(versionId,
                 pageSize, cursorKey);
         return convertPageWithInner(request, response, domain, model, page);
     }

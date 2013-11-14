@@ -376,14 +376,14 @@ public class SurveyService {
     }
 
     @Deprecated
-    public CursorPage<DAnswer, Long> getAnswersPage(Long responseId, int pageSize, Serializable cursorKey) {
+    public CursorPage<DAnswer> getAnswersPage(Long responseId, int pageSize, Serializable cursorKey) {
         return getAnswersPage(responseId, pageSize, null != cursorKey ? cursorKey.toString() : (String) null);
     }
     
-    public CursorPage<DAnswer, Long> getAnswersPage(Long responseId, int pageSize, String cursorKey) {
+    public CursorPage<DAnswer> getAnswersPage(Long responseId, int pageSize, String cursorKey) {
         final DResponse response = new DResponse();
         response.setId(responseId);
-        final CursorPage<DAnswer, Long> page = answerDao.queryPageByResponse(response, pageSize, cursorKey);
+        final CursorPage<DAnswer> page = answerDao.queryPageByResponse(response, pageSize, cursorKey);
         return page;
     }
     
@@ -405,16 +405,16 @@ public class SurveyService {
     }
     
     @Deprecated
-    public CursorPage<DOption, Long> getOptionsPage(Long questionId, int pageSize, Serializable cursorKey) {
+    public CursorPage<DOption> getOptionsPage(Long questionId, int pageSize, Serializable cursorKey) {
         return getOptionsPage(questionId, pageSize, null != cursorKey ? cursorKey.toString() : (String) null);
     }
     
-    public CursorPage<DOption, Long> getOptionsPage(Long questionId, int pageSize, String cursorKey) {
+    public CursorPage<DOption> getOptionsPage(Long questionId, int pageSize, String cursorKey) {
         DQuestion question = new DQuestion();
         question.setId(questionId);
 
         optionDao.queryPage(pageSize, DOptionDao.COLUMN_NAME_CREATEDDATE, true, null, false, cursorKey);
-        final CursorPage<DOption, Long> page = optionDao.queryPageByQuestion(question, pageSize, cursorKey);
+        final CursorPage<DOption> page = optionDao.queryPageByQuestion(question, pageSize, cursorKey);
 
         // run a quick sort by created date to avoid indexing.
         if (page.getTotalSize() > 1) {
@@ -453,10 +453,10 @@ public class SurveyService {
         return questionDao.queryByVersion(version);
     }
     
-    public CursorPage<DQuestion, Long> getQuestionsPage(Long versionId, int pageSize, String cursorKey) {
+    public CursorPage<DQuestion> getQuestionsPage(Long versionId, int pageSize, String cursorKey) {
         final DVersion version = new DVersion();
         version.setId(versionId);
-        final CursorPage<DQuestion, Long> page = questionDao.queryPageByVersion(version, pageSize, cursorKey);
+        final CursorPage<DQuestion> page = questionDao.queryPageByVersion(version, pageSize, cursorKey);
         return page;
     }
     
@@ -465,10 +465,10 @@ public class SurveyService {
         return entity;
     }
     
-    public CursorPage<DResponse, Long> getResponsesPage(Long versionId, int pageSize, String cursorKey) {
+    public CursorPage<DResponse> getResponsesPage(Long versionId, int pageSize, String cursorKey) {
         DVersion version = new DVersion();
         version.setId(versionId);
-        final CursorPage<DResponse, Long> page = responseDao.queryPageByVersion(version, pageSize, cursorKey);
+        final CursorPage<DResponse> page = responseDao.queryPageByVersion(version, pageSize, cursorKey);
         return page;
     }
     
@@ -478,12 +478,12 @@ public class SurveyService {
     }
     
     @Deprecated
-    public CursorPage<DSurvey, Long> getSurveysPage(int pageSize, Serializable cursorKey) {
+    public CursorPage<DSurvey> getSurveysPage(int pageSize, Serializable cursorKey) {
         return getSurveysPage(pageSize, null != cursorKey ? cursorKey.toString() : (String) null);
     }
     
-    public CursorPage<DSurvey, Long> getSurveysPage(int pageSize, String cursorKey) {
-        final CursorPage<DSurvey, Long> page = surveyDao.queryPage(pageSize, cursorKey);
+    public CursorPage<DSurvey> getSurveysPage(int pageSize, String cursorKey) {
+        final CursorPage<DSurvey> page = surveyDao.queryPage(pageSize, cursorKey);
         return page;
     }
     
@@ -492,10 +492,10 @@ public class SurveyService {
         return entity;
     }
     
-    public CursorPage<DVersion, Long> getVersionsPage(Long surveyId, int pageSize, String cursorKey) {
+    public CursorPage<DVersion> getVersionsPage(Long surveyId, int pageSize, String cursorKey) {
         DSurvey survey = new DSurvey();
         survey.setId(surveyId);
-        final CursorPage<DVersion, Long> page = versionDao.queryPageBySurvey(survey, pageSize, cursorKey);
+        final CursorPage<DVersion> page = versionDao.queryPageBySurvey(survey, pageSize, cursorKey);
         return page;
     }
     

@@ -127,7 +127,7 @@ public class OptionController extends CrudController<JOption,
             @RequestParam(defaultValue="10") int pageSize, 
             @RequestParam(required=false) String cursorKey) {
         Long questionId = (Long) model.asMap().get("questionId");
-        CursorPage<DOption, Long> page = surveyService.getOptionsPage(questionId, pageSize, cursorKey);
+        CursorPage<DOption> page = surveyService.getOptionsPage(questionId, pageSize, cursorKey);
         return convertPage(page);
     }
 

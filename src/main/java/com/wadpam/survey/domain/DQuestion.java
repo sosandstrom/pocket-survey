@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import net.sf.mardao.core.domain.AbstractLongEntity;
 
+import java.util.Collection;
+
 /**
  *
  * @author os
@@ -27,6 +29,13 @@ public class DQuestion extends AbstractLongEntity {
     /** The answer type: TEXT, NUMBER, IMAGE, ... */
     @Basic
     private Long type;
+
+    /**
+     * This availability of this question depends on a list of other questions
+     * It should only be enabled once all of these questions have received valid input from the users.
+     */
+    @Basic
+    private Collection<Long> dependsOnQuestions;
 
     /** The survey this question is for */
     @ManyToOne
@@ -94,5 +103,13 @@ public class DQuestion extends AbstractLongEntity {
 
     public void setVersion(DVersion version) {
         this.version = version;
+    }
+
+    public Collection<Long> getDependsOnQuestions() {
+        return dependsOnQuestions;
+    }
+
+    public void setDependsOnQuestions(Collection<Long> dependsOnQuestions) {
+        this.dependsOnQuestions = dependsOnQuestions;
     }
 }

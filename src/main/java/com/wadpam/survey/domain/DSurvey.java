@@ -19,6 +19,10 @@ public class DSurvey extends AbstractLongEntity {
     @Basic
     private String title;
 
+    /** A description of this survey */
+    @Basic
+    private String description;
+
     /** Application-specific attribute */
     @Basic
     private String appArg0;
@@ -46,6 +50,12 @@ public class DSurvey extends AbstractLongEntity {
     public void setTitle(String title) {
         this.title = title;
     }
-    
-    
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

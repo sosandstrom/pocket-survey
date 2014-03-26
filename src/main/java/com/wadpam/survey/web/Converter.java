@@ -152,6 +152,7 @@ public class Converter extends BaseConverter {
         to.setQuestion(from.getQuestion());
         to.setRequired(from.getRequired());
         to.setType(from.getType());
+        to.setDependsOnQuestions(from.getDependsOnQuestions());
         to.setSurveyId(null != from.getSurvey() ? from.getSurvey().getId() : null);
         to.setVersionId(null != from.getVersion() ? from.getVersion().getId() : null);
         
@@ -170,6 +171,7 @@ public class Converter extends BaseConverter {
         to.setQuestion(from.getQuestion());
         to.setRequired(from.getRequired());
         to.setType(from.getType());
+        to.setDependsOnQuestions(from.getDependsOnQuestions());
         if (null != from.getSurveyId()) {
             final DSurvey survey = new DSurvey();
             survey.setId(from.getSurveyId());
@@ -240,6 +242,7 @@ public class Converter extends BaseConverter {
         
         to.setState(from.getState());
         to.setTitle(from.getTitle());
+        to.setDescription(from.getDescription());
         
         return to;
     }
@@ -254,6 +257,7 @@ public class Converter extends BaseConverter {
 
         to.setState(from.getState());
         to.setTitle(from.getTitle());
+        to.setDescription(from.getDescription());
         
         return to;
     }

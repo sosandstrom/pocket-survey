@@ -18,35 +18,96 @@ public class JQuestion extends JBaseObject {
     /** Remind user if not answered */
     public static final long REQUIRED_REMINDER = 2;
     
-    /** Free-text input */
+    /**
+     * Free-text input.
+     * Normally not validation should be done by the app.
+     */
     public static final long TYPE_TEXT = 1;
     
-    /** Numeric input */
+    /**
+     * Numeric input
+     * App should validate that the user enter a number.
+     */
     public static final long TYPE_NUMBER = 2;
     
-    /** 0-100 integer input */
+    /**
+     * Percentage input.
+     * The app should only allow number input within the range 0-100
+     */
     public static final long TYPE_PERCENT = 3;
     
-    /** true or false (checkbox) input */
+    /**
+     * Checkbox input
+     * true or false (checkbox) input
+     */
     public static final long TYPE_BOOLEAN = 4;
     
-    /** Acquire an image with camera, and upload */
+    /**
+     * Acquire an image with camera, and upload.
+     * TODO Where to provide the url to the uploaded image?
+     */
     public static final long TYPE_IMAGE = 5;
     
-    /** Any file to upload */
+    /**
+     * Any file to upload
+     * TODO Where to provide the url to the uploaded file?
+     */
     public static final long TYPE_FILE = 6;
     
-    /** Radio buttons (single select) */
+    /**
+     * Radio buttons (single select)
+     * The options are provided as Options entities.
+     */
     public static final long TYPE_RADIO = 7;
     
-    /** Multi-select input */
+    /**
+     * Multi-select input
+     * The options are provided as Options entities.
+     */
     public static final long TYPE_MULTI = 8;
     
-    /** Drop-down select input */
+    /**
+     * Drop-down select input (single select
+     * The options are provided as Options entities.
+     */
     public static final long TYPE_DROPDOWN = 9;
     
-    /** Date (and time) input */
+    /**
+     * Date (and time) input.
+     * The app must check that the input is a valid Date
+     * TODO How is this value provided, as timestamp or date string?
+     */
     public static final long TYPE_DATE = 10;
+
+    /**
+     * This type acts as a section/group.
+     * All questions until the next section type or the end of the survey should be given a grouped presentation.
+     * The question string is optional and if provided should be presented as a header for the section.
+     */
+    public static final long TYPE_SECTION = 11;
+
+    /**
+     * Email input type.
+     * The app must check that the input is a valid email
+     */
+    public static final long TYPE_EMAIL = 12;
+
+    /**
+     * Address input type.
+     * The app can use this type to perform reverse geocoding and/or input validation.
+     */
+    public static final long TYPE_ADDRESS = 13;
+
+    /**
+     * Phone number input type
+     * The app can use this type to support tap to call and/or input validation
+     */
+    public static final long TYPE_PHONE_NUMBER = 14;
+
+    /**
+     * This types acts as a text presentation only, e.g. to provide additional text and context to a survey.
+     */
+    public static final long TYPE_DESCRIPTION = 15;
     
     /** The survey this question is for */
     private Long surveyId;
@@ -65,7 +126,13 @@ public class JQuestion extends JBaseObject {
     
     /** The answer type: TEXT, NUMBER, IMAGE, ... */
     private Long type;
-    
+
+    /**
+     * This availability of this question depends on a list of other questions
+     * It should only be enabled once all of these questions have received valid input from the users.
+     */
+    private Collection<Long> dependsOnQuestions;
+
     /** The options configured for this question */
     private Collection<JOption> options;
     
@@ -142,4 +209,11 @@ public class JQuestion extends JBaseObject {
         this.versionId = versionId;
     }
 
+    public Collection<Long> getDependsOnQuestions() {
+        return dependsOnQuestions;
+    }
+
+    public void setDependsOnQuestions(Collection<Long> dependsOnQuestions) {
+        this.dependsOnQuestions = dependsOnQuestions;
+    }
 }

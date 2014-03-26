@@ -1,5 +1,7 @@
 package com.wadpam.survey.dao;
 
+import com.wadpam.survey.domain.DQuestion;
+import net.sf.mardao.core.CursorPage;
 import net.sf.mardao.core.Filter;
 
 /**
@@ -28,4 +30,11 @@ public class DQuestionDaoBean extends GeneratedDQuestionDaoImpl implements DQues
         Filter filter = createEqualsFilter(COLUMN_NAME_VERSION, versionKey);
         return queryIterableKeys(0, -1, null, null, null, false, null, false, filter);
     }
+
+    @Override
+    public CursorPage<DQuestion> queryPageByVersionSortedByOrdering(Object versionKey, int pageSize, String cursorString) {
+        Filter filter = createEqualsFilter(COLUMN_NAME_VERSION, versionKey);
+        return queryPage(false, pageSize, null, null, COLUMN_NAME_ORDERING, true, null, false, cursorString, filter);
+    }
+
 }

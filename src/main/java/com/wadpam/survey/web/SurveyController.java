@@ -6,13 +6,14 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.wadpam.survey.domain.DResponse;
+import com.wadpam.survey.json.JResponse;
+import com.wadpam.survey.service.ResponseService;
+import net.sf.mardao.core.CursorPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
@@ -40,6 +41,9 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
 
     private VersionController versionController;
 
+    private ResponseController responseController;
+
+
     /**
      * Deep-clone a survey version.
      * @param surveyId
@@ -54,10 +58,38 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
     public JVersion cloneVersion(
             @PathVariable Long surveyId,
             @RequestParam Long fromVersionId,
-            @RequestParam String description
-            ) {
+            @RequestParam String description) {
         DVersion to = service.cloneVersion(surveyId, fromVersionId, description);
         return versionController.convertDomain(to);
+    }
+
+    /**
+     * Get all existing responses for a particular meeting id
+     * @param request the incoming request
+     * @param response response
+     * @param domain domain name
+     * @param extMeetingId external meeting identity
+     * @param pageSize the number of responses to return, default 10
+     * @param cursorKey optional cursor key
+     * @param model model
+     * @return all responses for the given external meeting id
+     */
+    @ResponseBody
+    @RequestMapping(value="v10/response", method= RequestMethod.GET, params={"extMeetingId"})
+    public JCursorPage<JResponse> getAllResponsesForExternalMeeting(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String domain,
+            @RequestParam(required=true) String extMeetingId,
+            @RequestParam(defaultValue="10") int pageSize,
+            @RequestParam(required=false) String cursorKey,
+            Model model) {
+
+        LOG.debug("Get all responses for external meeting id {}", extMeetingId);
+
+        JCursorPage<JResponse> responsePage = responseController.getPageByExtMeetingId(
+                request, response, domain, extMeetingId, pageSize, cursorKey, model);
+        return responsePage;
     }
 
     @Override
@@ -104,6 +136,7 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
         to.setAppArg0(from.getAppArg0());
         to.setState(from.getState());
         to.setTitle(from.getTitle());
+        to.setDescription(from.getDescription());
     }
 
     @Override
@@ -113,6 +146,7 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
         to.setAppArg0(from.getAppArg0());
         to.setState(from.getState());
         to.setTitle(from.getTitle());
+        to.setDescription(from.getDescription());
     }
 
     @Autowired
@@ -124,4 +158,10 @@ public class SurveyController extends CrudController<JSurvey, DSurvey, Long, Sur
     public void setVersionController(VersionController versionController) {
         this.versionController = versionController;
     }
+
+    @Autowired
+    public void setResponseController(ResponseController responseController) {
+        this.responseController = responseController;
+    }
+
 }

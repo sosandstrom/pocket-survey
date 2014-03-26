@@ -453,10 +453,12 @@ public class SurveyService {
         return questionDao.queryByVersion(version);
     }
     
-    public CursorPage<DQuestion> getQuestionsPage(Long versionId, int pageSize, String cursorKey) {
-        final DVersion version = new DVersion();
+    public CursorPage<DQuestion> getQuestionsPageSortedByOrdering(Long versionId, int pageSize, String cursorKey) {
+        DVersion version = new DVersion();
         version.setId(versionId);
-        final CursorPage<DQuestion> page = questionDao.queryPageByVersion(version, pageSize, cursorKey);
+        Object key = versionDao.getPrimaryKey(version);
+
+        final CursorPage<DQuestion> page = questionDao.queryPageByVersionSortedByOrdering(key, pageSize, cursorKey);
         return page;
     }
     
@@ -464,7 +466,8 @@ public class SurveyService {
         final DResponse entity = responseDao.findByPrimaryKey(id);
         return entity;
     }
-    
+
+
     public CursorPage<DResponse> getResponsesPage(Long versionId, int pageSize, String cursorKey) {
         DVersion version = new DVersion();
         version.setId(versionId);

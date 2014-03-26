@@ -16,6 +16,9 @@ public class JSurvey extends JBaseObject {
     
     /** The title of this survey */
     private String title;
+
+    /** A description of this survey */
+    private String description;
     
     /** The Versions configured for this survey */
     private Collection<JVersion> versions;
@@ -52,4 +55,11 @@ public class JSurvey extends JBaseObject {
         this.versions = versions;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

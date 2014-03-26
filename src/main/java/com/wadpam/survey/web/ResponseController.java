@@ -222,10 +222,38 @@ public class ResponseController extends CrudController<JResponse,
             Model model) {
 
         final CursorPage<DResponse> page = service.getResponsesPageBySurveyIdVersionIdAndExtMeetingId(surveyId, versionId, extMeetingId, pageSize, cursorKey);
-        final JCursorPage<JResponse> body = (JCursorPage<JResponse>) convertPageWithInner(request, response, domain, model, page);
+        final JCursorPage<JResponse> body = convertPageWithInner(request, response, domain, model, page);
 
         return body;
     }
+
+
+    /**
+     * Get all responses for a particular external meeting id.
+     * There is no good way of mapping this method to a request, so this method is called from the survey controller
+     * @param request the incoming request
+     * @param response response
+     * @param domain domain name
+     * @param extMeetingId external meeting identity
+     * @param pageSize the number of responses to return, default 10
+     * @param cursorKey optional cursor key
+     * @param model model
+     * @return all responses for the given external meeting id
+     */
+    public JCursorPage<JResponse> getPageByExtMeetingId(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String domain,
+            String extMeetingId,
+            int pageSize,
+            String cursorKey,
+            Model model) {
+
+        final CursorPage<DResponse> page = service.getResponsesPageByExtMeetingId(extMeetingId, pageSize, cursorKey);
+        final JCursorPage<JResponse> body = convertPageWithInner(request, response, domain, model, page);
+        return body;
+    }
+
 
     private JCursorPage<JResponse> addInnerAnswers(JCursorPage<JResponse> body) {
         HashMap<Long, JResponse> ids = new HashMap<Long, JResponse>();

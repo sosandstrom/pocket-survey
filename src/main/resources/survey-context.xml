@@ -78,6 +78,7 @@
     <bean id="surveyController" class="com.wadpam.survey.web.SurveyController">
         <property name="versionController" ref="versionController" />
         <property name="surveyCrudService" ref="surveyCrudService" />
+        <property name="responseController" ref="responseController" />
     </bean>
     
     <bean id="versionController" class="com.wadpam.survey.web.VersionController">

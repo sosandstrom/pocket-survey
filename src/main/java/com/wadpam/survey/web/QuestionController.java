@@ -4,25 +4,6 @@
 
 package com.wadpam.survey.web;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.sf.mardao.core.CursorPage;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.wadpam.docrest.domain.RestCode;
 import com.wadpam.docrest.domain.RestReturn;
 import com.wadpam.open.json.JCursorPage;
@@ -34,6 +15,16 @@ import com.wadpam.survey.json.JOption;
 import com.wadpam.survey.json.JQuestion;
 import com.wadpam.survey.service.QuestionService;
 import com.wadpam.survey.service.SurveyService;
+import net.sf.mardao.core.CursorPage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
@@ -113,7 +104,7 @@ public class QuestionController extends CrudController<JQuestion,
             @RequestParam(required=false) String cursorKey) {
 
         Long versionId = (Long) model.asMap().get("versionId");
-        CursorPage<DQuestion> page = surveyService.getQuestionsPage(versionId,
+        CursorPage<DQuestion> page = surveyService.getQuestionsPageSortedByOrdering(versionId,
                 pageSize, cursorKey);
         return convertPageWithInner(request, response, domain, model, page);
     }
@@ -133,6 +124,7 @@ public class QuestionController extends CrudController<JQuestion,
         to.setQuestion(from.getQuestion());
         to.setRequired(from.getRequired());
         to.setType(from.getType());
+        to.setDependsOnQuestions(from.getDependsOnQuestions());
         to.setSurveyId(null != from.getSurvey() ? from.getSurvey().getId() : null);
         to.setVersionId(null != from.getVersion() ? from.getVersion().getId() : null);
     }
@@ -146,6 +138,7 @@ public class QuestionController extends CrudController<JQuestion,
         to.setQuestion(from.getQuestion());
         to.setRequired(from.getRequired());
         to.setType(from.getType());
+        to.setDependsOnQuestions(from.getDependsOnQuestions());
         if (null != from.getSurveyId()) {
             final DSurvey survey = new DSurvey();
             survey.setId(from.getSurveyId());

@@ -143,6 +143,8 @@ public class OptionController extends CrudController<JOption,
         
         to.setAppArg0(from.getAppArg0());
         to.setLabel(from.getLabel());
+        to.setOrdering(from.getOrdering());
+        to.setDefaultOption(from.getDefaultOption());
         to.setQuestionId(null != from.getQuestion() ? from.getQuestion().getId() : null);
         to.setSurveyId(null != from.getSurvey() ? from.getSurvey().getId() : null);
         to.setVersionId(null != from.getVersion() ? from.getVersion().getId() : null);
@@ -154,6 +156,8 @@ public class OptionController extends CrudController<JOption,
 
         to.setAppArg0(from.getAppArg0());
         to.setLabel(from.getLabel());
+        to.setOrdering(from.getOrdering());
+        to.setDefaultOption(from.getDefaultOption());
         if (null != from.getQuestionId()) {
             final DQuestion foreign = new DQuestion();
             foreign.setId(from.getQuestionId());

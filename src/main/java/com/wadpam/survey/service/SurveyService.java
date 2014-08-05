@@ -413,16 +413,24 @@ public class SurveyService {
         DQuestion question = new DQuestion();
         question.setId(questionId);
 
-        optionDao.queryPage(pageSize, DOptionDao.COLUMN_NAME_CREATEDDATE, true, null, false, cursorKey);
+        //optionDao.queryPage(pageSize, DOptionDao.COLUMN_NAME_ORDERING, true, DOptionDao.COLUMN_NAME_CREATEDDATE, true, cursorKey);
         final CursorPage<DOption> page = optionDao.queryPageByQuestion(question, pageSize, cursorKey);
 
-        // run a quick sort by created date to avoid indexing.
+        // run a quick sort by in code to avoid indexing of properties
         if (page.getTotalSize() > 1) {
             List<DOption> options = new ArrayList<DOption>(page.getItems());
             Collections.sort(options, new Comparator<DOption>() {
                 @Override
                 public int compare(DOption o1, DOption o2) {
-                    return (int) (o1.getCreatedDate().getTime() - o2.getCreatedDate().getTime());
+
+                    // First sort by ordering if available
+                    // If not sort by created date
+                    if (null != o1.getOrdering() || null != o2.getOrdering()) {
+                        return (int) (o1.getOrdering().longValue() - o2.getOrdering().longValue());
+                    } else {
+                        return (int) (o1.getCreatedDate().getTime() - o2.getCreatedDate().getTime());
+                    }
+
                 }
             });
             page.setItems(options);
